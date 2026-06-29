@@ -14,15 +14,16 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false
     }
   });
 
   // Load the worker HTML
   mainWindow.loadFile('index.html');
 
-  // Open DevTools in development
-  // mainWindow.webContents.openDevTools();
+  // Open DevTools for debugging (remove in production)
+  mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {

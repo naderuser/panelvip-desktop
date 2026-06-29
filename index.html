@@ -541,10 +541,15 @@
 
     // ==================== لاگین معلم ====================
     function loginTeacher() {
-        const password = document.getElementById('loginPassword').value;
+        const passwordEl = document.getElementById('loginPassword');
+        const password = passwordEl ? passwordEl.value : '';
         const errorEl = document.getElementById('loginError');
         
+        console.log('Password entered:', password);
+        console.log('Expected:', 'nader0933');
+        
         if (password === 'nader0933') {
+            console.log('Login success!');
             isLoggedIn = true;
             localStorage.setItem('isTeacherLoggedIn', 'true');
             document.getElementById('loginOverlay').style.display = 'none';
@@ -552,6 +557,7 @@
             showToast('✅ خوش آمدید استاد!');
             loadData();
         } else {
+            console.log('Login failed!');
             errorEl.style.display = 'block';
             document.getElementById('loginPassword').value = '';
             setTimeout(() => { errorEl.style.display = 'none'; }, 3000);
