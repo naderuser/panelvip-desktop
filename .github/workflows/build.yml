@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -25,9 +28,28 @@ jobs:
       - name: Build Windows App
         run: npm run build:win
 
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v1
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/*.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: panelvip-exe
+          path: dist/*.exe
+          retention-days: 5
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          $exe = Get-ChildItem dist/*.exe | Select-Object -First 1
+          if ($exe) {
+            echo "Found: $($exe.Name)"
+            echo "::set-output name=exe_name::$($exe.Name)"
+          }
+        id: find_exe
+
+      - name: Upload to Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-release-asset@v1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*.exe
+          asset_name: panelvip-desktop.exe
+          asset_content_type: application/octet-stream
